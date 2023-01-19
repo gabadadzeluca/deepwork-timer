@@ -95,8 +95,8 @@ let breakCount = breakTime * 60;
 // timer for 5 minutes, then return to the timer countdown
 function countdownBreak(){
     if(breakCount > 0){
-        // count--; // test
-        breakCount-=10; // test
+        breakCount--; // test
+        // breakCount-=10; // test
 
         let minutes = Math.floor(breakCount / 60);
         let seconds = breakCount % 60;
@@ -114,7 +114,7 @@ function countdownBreak(){
             timerMinutes.innerHTML = 0 + '<span>min</span>';
             console.log("done");
         };
-        const percent = ((minutes/60) / breakTime*60)*100;
+        const percent = (breakCount /  (breakTime * 60)) * 100;
         console.log(percent,"%");
         const offset = circumference - (percent / 100) * circumference;
         timerCircle.style.strokeDashoffset = offset;
@@ -150,7 +150,6 @@ function startTimer(){
 function stopTimer(){
     clearInterval(interval, countdown); // stop countdown
     // stop break countdown
-    //(if it's on break when pressed);
     clearInterval(intervalBreak, countdownBreak); 
 
     // display startbtn
