@@ -1,3 +1,5 @@
+"use strict";
+
 import {createNotification} from './notification.js';
 
 const timerCircle = document.querySelector('circle.mm');
@@ -17,6 +19,8 @@ const timeSelectedDiv = document.querySelector('.time-selected');
 const timeSelection = document.querySelector('.time-select'); // parent div of the above
 
 const sound = '../assets/alarm.mp3'; // notification sound
+const icon = '../assets/alarm-clock.png'; // alarm icon
+
 // active time selected
 let timeSelected = parseInt(timeSelectedDiv.innerHTML); 
 
@@ -43,13 +47,16 @@ let count = timeSelected * 60;
 let startingtime = timeSelected; // time to reference overall time
 let interval;
 
+let intervalBreak;
+
 function countdown(){
-    // count = timeSelected*60;
-    console.log("COUNT:",count)
+    let halfwayPoint = Math.floor(timeSelected*60/2);
+    console.log('HALFWAY:',halfwayPoint)
+    console.log("COUNT:",count);
     if(count >= 0){
         // count--; // test
-        count-=600; // test
-        // count-=10; // test
+        // count-=600; // test
+        count-=10; // test
 
         let minutes = Math.floor(count / 60);
         let seconds = count % 60;
@@ -63,12 +70,17 @@ function countdown(){
             console.log("done");
             createNotification("Focus session done", {
                 body: "Well done, you've just finished a session",
-                icon: "path/to/icon.png",
+                icon: icon,
                 sound: sound
             });
             stopTimer();
             return;
         };
+        if(count == halfwayPoint){
+            console.log("BREAK TIME");
+            clearInterval(interval, countdown);// stop at half
+            intervalBreak = setInterval(countdownBreak, 1000); // TEST
+        }
         // timerCircle.style.strokeDashoffset = -(440 - (440*minutes)/60);
         const percent = (minutes/startingtime)*100;
         const offset = circumference - (percent / 100) * circumference;
@@ -78,9 +90,40 @@ function countdown(){
     }
 }
 
+const breakTime = 5; // minutes
+let breakCount = breakTime * 60;
+// timer for 5 minutes, then return to the timer countdown
+function countdownBreak(){
+    if(breakCount > 0){
+        // count--; // test
+        breakCount-=10; // test
 
-// setInterval(countdown, 1000);
-// let interval;
+        let minutes = Math.floor(breakCount / 60);
+        let seconds = breakCount % 60;
+        console.log(minutes, seconds);
+        // update values
+        
+        if(seconds != 0){
+            timerMinutes.innerHTML = minutes + ':' + seconds;
+        }else{
+            timerMinutes.innerHTML = minutes + '<span>min</span>'
+        }
+
+       
+        if(minutes < 0){
+            timerMinutes.innerHTML = 0 + '<span>min</span>';
+            console.log("done");
+        };
+        const percent = ((minutes/60) / breakTime*60)*100;
+        console.log(percent,"%");
+        const offset = circumference - (percent / 100) * circumference;
+        timerCircle.style.strokeDashoffset = offset;
+    }else{
+        clearInterval(intervalBreak, countdownBreak);
+        interval = setInterval(countdown, 1000);
+    }
+}
+
 
 function getTime(){
     const time = timeSelectedDiv.innerHTML;
@@ -95,7 +138,8 @@ startBtn.addEventListener('click', startTimer);
 stopBtn.addEventListener('click', stopTimer);
 
 function startTimer(){
-    interval = setInterval(countdown, 1000); // start countdown
+    // interval = setInterval(countdown, 1000); // start countdown
+    interval = setInterval(countdown, 1); // TEST
     // display stopbtn & hide startbtn
     stopBtn.classList.remove('inactive');
     startBtn.classList.add('inactive');
@@ -105,7 +149,9 @@ function startTimer(){
 
 function stopTimer(){
     clearInterval(interval, countdown); // stop countdown
-    // reset minutes to starting minutes
+    // stop break countdown
+    //(if it's on break when pressed);
+    clearInterval(intervalBreak, countdownBreak); 
 
     // display startbtn
     startBtn.classList.remove('inactive');
