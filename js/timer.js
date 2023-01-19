@@ -198,3 +198,26 @@ function displayTimeSpent(){
 
 
 }
+
+
+// get the date and refresh local storage at 12PM
+function scheduleValueRefresh() {
+    let now = new Date();
+    let refreshTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0); // 12:00:00 PM
+
+    if (now > refreshTime) {
+        // If it's past 12 PM, set the refresh time for tomorrow
+        refreshTime.setDate(refreshTime.getDate() + 1);
+    }
+
+    let timeUntilRefresh = refreshTime - now;
+    setTimeout(function() {
+        // Update the value in local storage
+        localStorage.setItem("sessionDuration", 0);
+        // Schedule the next refresh
+        setInterval(arguments.callee, 86400000);
+    }, timeUntilRefresh);
+}
+
+
+scheduleValueRefresh();
