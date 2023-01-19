@@ -49,14 +49,24 @@ let interval;
 
 let intervalBreak;
 
+let sessionDuration = localStorage.getItem('sessionDuration') || 0;
+if(!localStorage.getItem('sessionDuration')){
+    localStorage.setItem('sessionDuration', 0);
+}
+
+
+// display user's progress
+displayTimeSpent();
+
 function countdown(){
     let halfwayPoint = Math.floor(timeSelected*60/2);
-    console.log('HALFWAY:',halfwayPoint)
-    console.log("COUNT:",count);
+
     if(count >= 0){
-        // count--; // test
+        console.log(sessionDuration);
+        sessionDuration++;
+        count--; // test
         // count-=600; // test
-        count-=10; // test
+        // count-=10; // test
 
         let minutes = Math.floor(count / 60);
         let seconds = count % 60;
@@ -67,22 +77,25 @@ function countdown(){
         // display stroke
         if(minutes < 0){
             timerMinutes.innerHTML = 0 + '<span>min</span>';
-            console.log("done");
             createNotification("Focus session done", {
                 body: "Well done, you've just finished a session",
                 icon: icon,
                 sound: sound
             });
             stopTimer();
-            return;
         };
-        if(count == halfwayPoint){
+        if(count == halfwayPoint && startingtime > 30){
             console.log("BREAK TIME");
             clearInterval(interval, countdown);// stop at half
+            // display break over notification
+            createNotification("Half of the session done", {
+                body: "Well done, now you have a 5 minute break",
+                icon: icon,
+                sound: sound
+            });
             intervalBreak = setInterval(countdownBreak, 1000); // TEST
         }
-        // timerCircle.style.strokeDashoffset = -(440 - (440*minutes)/60);
-        const percent = (minutes/startingtime)*100;
+        const percent = (count/60) /startingtime *100;
         const offset = circumference - (percent / 100) * circumference;
         timerCircle.style.strokeDashoffset = offset;
     }else{
@@ -93,32 +106,37 @@ function countdown(){
 const breakTime = 5; // minutes
 let breakCount = breakTime * 60;
 // timer for 5 minutes, then return to the timer countdown
+
 function countdownBreak(){
     if(breakCount > 0){
-        breakCount--; // test
-        // breakCount-=10; // test
+        // breakCount--; // test
+        breakCount-=10; // test
 
         let minutes = Math.floor(breakCount / 60);
         let seconds = breakCount % 60;
         console.log(minutes, seconds);
-        // update values
         
         if(seconds != 0){
             timerMinutes.innerHTML = minutes + ':' + seconds;
+        }else if(minutes<1 && seconds > 0){
+            timerMinutes.innerHTML = '0:' + seconds;
         }else{
             timerMinutes.innerHTML = minutes + '<span>min</span>'
         }
-
        
         if(minutes < 0){
             timerMinutes.innerHTML = 0 + '<span>min</span>';
             console.log("done");
         };
         const percent = (breakCount /  (breakTime * 60)) * 100;
-        console.log(percent,"%");
         const offset = circumference - (percent / 100) * circumference;
         timerCircle.style.strokeDashoffset = offset;
     }else{
+        createNotification("Break over", {
+            body: "Start the second part of the session",
+            icon: icon,
+            sound: sound
+        });
         clearInterval(intervalBreak, countdownBreak);
         interval = setInterval(countdown, 1000);
     }
@@ -158,6 +176,9 @@ function stopTimer(){
     // display time selection
     timeSelection.classList.remove('inactive');
     resetTimer();
+    // update local storage
+    localStorage.setItem('sessionDuration', sessionDuration);
+    displayTimeSpent();
 }
 
 function resetTimer(){
@@ -166,4 +187,14 @@ function resetTimer(){
     timerCircle.style.strokeDashoffset = 0; // reset progress line
 }
 
+function displayTimeSpent(){
+    const seconds = localStorage.getItem('sessionDuration'); // seconds
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const completed = document.querySelector('.completed');
+    console.log(seconds, minutes);
 
+    completed.innerHTML = `${hours} hours, ${minutes} minutes`;
+
+
+}
