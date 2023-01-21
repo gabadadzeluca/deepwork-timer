@@ -53,10 +53,16 @@ let sessionDuration = localStorage.getItem('sessionDuration') || 0;
 if(!localStorage.getItem('sessionDuration')){
     localStorage.setItem('sessionDuration', 0);
 }
+let streak = localStorage.getItem('steak') || 0;
+if(!localStorage.getItem('streak')){
+    localStorage.setItem('streak',streak);
+}
+
+// display streak
 
 
 // display user's progress
-displayTimeSpent();
+displayProgress();
 
 function countdown(){
     let halfwayPoint = Math.floor(timeSelected*60/2);
@@ -64,9 +70,8 @@ function countdown(){
     if(count >= 0){
         console.log(sessionDuration);
         sessionDuration++;
-        count--; // test
-        // count-=600; // test
-        // count-=10; // test
+        localStorage.setItem('sessionDuration', sessionDuration); // add to local storage
+        count--;
 
         let minutes = Math.floor(count / 60);
         let seconds = count % 60;
@@ -85,7 +90,6 @@ function countdown(){
             stopTimer();
         };
         if(count == halfwayPoint && startingtime > 30){
-            console.log("BREAK TIME");
             clearInterval(interval, countdown);// stop at half
             // display break over notification
             createNotification("Half of the session done", {
@@ -138,7 +142,8 @@ function countdownBreak(){
             sound: sound
         });
         clearInterval(intervalBreak, countdownBreak);
-        interval = setInterval(countdown, 1000);
+        // interval = setInterval(countdown, 1000);
+        interval = setInterval(countdown, 1);
     }
 }
 
@@ -178,7 +183,7 @@ function stopTimer(){
     resetTimer();
     // update local storage
     localStorage.setItem('sessionDuration', sessionDuration);
-    displayTimeSpent();
+    displayProgress();
 }
 
 function resetTimer(){
@@ -187,37 +192,37 @@ function resetTimer(){
     timerCircle.style.strokeDashoffset = 0; // reset progress line
 }
 
-function displayTimeSpent(){
+function displayProgress(){
     const seconds = localStorage.getItem('sessionDuration'); // seconds
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const completed = document.querySelector('.completed');
-    console.log(seconds, minutes);
-
     completed.innerHTML = `${hours} hours, ${minutes} minutes`;
-
-
+    // display streak
+    document.querySelector('.streak').innerHTML = localStorage.getItem('streak');
 }
 
 
-// get the date and refresh local storage at 12PM
-function scheduleValueRefresh() {
-    let now = new Date();
-    let refreshTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0); // 12:00:00 PM
 
-    if (now > refreshTime) {
-        // If it's past 12 PM, set the refresh time for tomorrow
-        refreshTime.setDate(refreshTime.getDate() + 1);
+
+function scheduleValueRefresh() {
+    let now = moment();
+    let refreshTime = moment().startOf('day').hours(12);
+    console.log(now);
+    console.log(refreshTime);
+    if (now.isAfter(refreshTime)) {
+        refreshTime.add(1, 'day');
+        // if more than 30 minutes spent, count a streak
+        if(parseInt(localStorage.getItem('sessionDuration'))/60 >= 30 ){
+            streak++;
+            localStorage.setItem('streak', streak);
+        }
     }
 
     let timeUntilRefresh = refreshTime - now;
     setTimeout(function() {
-        // Update the value in local storage
         localStorage.setItem("sessionDuration", 0);
-        // Schedule the next refresh
-        setInterval(arguments.callee, 86400000);
+        scheduleValueRefresh();
     }, timeUntilRefresh);
 }
-
-
-scheduleValueRefresh();
+setInterval(scheduleValueRefresh, 86400000);
