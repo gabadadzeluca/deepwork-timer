@@ -24,6 +24,9 @@ const icon = '../assets/alarm-clock.png'; // alarm icon
 // active time selected
 let timeSelected = parseInt(timeSelectedDiv.innerHTML); 
 
+// variable for mode change 
+let activeMode = 'deepWork';
+
 decreaseBtn.addEventListener('click', decreaseTime);
 increaseBtn.addEventListener('click', increaseTime);
 
@@ -39,7 +42,6 @@ function increaseTime(){
     if(timeSelected == 240) return;
     timeSelected += 15;
     timeSelectedDiv.innerHTML = timeSelected;
-    // timerMinutes.innerHTML = timeSelected + '<span>min</min>';
     getTime();
 }
 
@@ -55,27 +57,22 @@ if(!localStorage.getItem('sessionDuration')){
 }
 let streak = localStorage.getItem('steak') || 0;
 if(!localStorage.getItem('streak')){
-    localStorage.setItem('streak',streak);
+    localStorage.setItem('streak', streak);
 }
-
-// display streak
-
 
 // display user's progress
 displayProgress();
 
 function countdown(){
+    console.log(activeMode);
     let halfwayPoint = Math.floor(timeSelected*60/2);
-
     if(count >= 0){
-        console.log(sessionDuration);
         sessionDuration++;
         localStorage.setItem('sessionDuration', sessionDuration); // add to local storage
         count--;
 
         let minutes = Math.floor(count / 60);
         let seconds = count % 60;
-        console.log(minutes, seconds);
         // update values
         timerMinutes.innerHTML = minutes + '<span>min</span>';
     
@@ -97,7 +94,7 @@ function countdown(){
                 icon: icon,
                 sound: sound
             });
-            intervalBreak = setInterval(countdownBreak, 1000); // TEST
+            intervalBreak = setInterval(countdownBreak, 1000);
         }
         const percent = (count/60) /startingtime *100;
         const offset = circumference - (percent / 100) * circumference;
@@ -118,7 +115,6 @@ function countdownBreak(){
 
         let minutes = Math.floor(breakCount / 60);
         let seconds = breakCount % 60;
-        console.log(minutes, seconds);
         
         if(seconds != 0){
             timerMinutes.innerHTML = minutes + ':' + seconds;
@@ -130,7 +126,6 @@ function countdownBreak(){
        
         if(minutes < 0){
             timerMinutes.innerHTML = 0 + '<span>min</span>';
-            console.log("done");
         };
         const percent = (breakCount /  (breakTime * 60)) * 100;
         const offset = circumference - (percent / 100) * circumference;
@@ -142,8 +137,8 @@ function countdownBreak(){
             sound: sound
         });
         clearInterval(intervalBreak, countdownBreak);
-        // interval = setInterval(countdown, 1000);
-        interval = setInterval(countdown, 1);
+        interval = setInterval(countdown, 1000);
+        // interval = setInterval(countdown, 1);
     }
 }
 
@@ -161,8 +156,7 @@ startBtn.addEventListener('click', startTimer);
 stopBtn.addEventListener('click', stopTimer);
 
 function startTimer(){
-    // interval = setInterval(countdown, 1000); // start countdown
-    interval = setInterval(countdown, 1); // TEST
+    interval = setInterval(countdown, 1000); // start countdown
     // display stopbtn & hide startbtn
     stopBtn.classList.remove('inactive');
     startBtn.classList.add('inactive');
@@ -202,27 +196,44 @@ function displayProgress(){
     document.querySelector('.streak').innerHTML = localStorage.getItem('streak');
 }
 
+let lastSession = localStorage.getItem("lastSession") || 0;
 
+setInterval(checkStreak, 86400000); // once every 24 hours;
 
-
-function scheduleValueRefresh() {
-    let now = moment();
-    let refreshTime = moment().startOf('day').hours(12);
-    console.log(now);
-    console.log(refreshTime);
-    if (now.isAfter(refreshTime)) {
-        refreshTime.add(1, 'day');
-        // if more than 30 minutes spent, count a streak
-        if(parseInt(localStorage.getItem('sessionDuration'))/60 >= 30 ){
+function checkStreak(){
+    let now = Date.now();
+    if (now - lastSession > 86400000) {
+        // reset the time spent and streak
+        localStorage.setItem('sessionDuration', 0);
+        localStorage.setItem('streak', 0);
+        localStorage.setItem('lastSession', now);
+    }else{
+        if(sessionDuration >= 30){
+            // update streak
             streak++;
             localStorage.setItem('streak', streak);
+            // refresh sessionDuration
+            sessionDuration = 0;
+            localStorage.setItem('sessionDuration', sessionDuration);
+            
+            displayProgress();
         }
     }
-
-    let timeUntilRefresh = refreshTime - now;
-    setTimeout(function() {
-        localStorage.setItem("sessionDuration", 0);
-        scheduleValueRefresh();
-    }, timeUntilRefresh);
 }
-setInterval(scheduleValueRefresh, 86400000);
+
+
+
+const deepWorkBtn = document.querySelector('.deep-work');
+const meditationBtn = document.querySelector('.meditation');
+
+deepWorkBtn.addEventListener('click', toggleMode);
+meditationBtn.addEventListener('click', toggleMode);
+
+function toggleMode(){ 
+    [...this.parentElement.children].forEach(element=>{
+        element.classList.remove('mode-picked');
+    });
+    this.classList.add('mode-picked');
+    activeMode = this.classList.contains('deep-work') ? 'deepWork' : 'meditation';
+    console.log(activeMode);
+}
