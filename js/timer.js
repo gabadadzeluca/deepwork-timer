@@ -62,13 +62,47 @@ if(!localStorage.getItem('streak')){
 
 // display user's progress
 displayProgress();
+displayMode(activeMode);
+// display mode
+function displayMode(mode){
+    const focusTextDivs = document.querySelectorAll('.focus-session');
+    const meditationText = document.querySelector('.meditation-session');
+    console.log(window.innerWidth);
+    if(mode == 'deepWork'){
+        focusTextDivs.forEach(div=>{
+            div.style.display = 'block';
+            if(window.innerWidth >= 900){
+                if(div.classList.contains('mobile')){
+                    div.style.display = 'none';
+                }
+            }else{
+                if(div.classList.contains('desktop')){
+                    div.style.display = 'none';
+                }
+            }
+        });
+        meditationText.style.display = 'none';
+    }else{ // meditation mode
+        focusTextDivs.forEach(div=>{
+            div.style.display = 'none';
+        });
+        meditationText.style.display = 'block';
+        
+    }
+}
+
+
 
 function countdown(){
     console.log(activeMode);
     let halfwayPoint = Math.floor(timeSelected*60/2);
     if(count >= 0){
-        sessionDuration++;
-        localStorage.setItem('sessionDuration', sessionDuration); // add to local storage
+        if(activeMode == 'deepWork'){
+            sessionDuration++;
+            localStorage.setItem('sessionDuration', sessionDuration); // add to local storage
+        }
+        // sessionDuration++;
+        // localStorage.setItem('sessionDuration', sessionDuration); // add to local storage
         count--;
 
         let minutes = Math.floor(count / 60);
@@ -79,11 +113,20 @@ function countdown(){
         // display stroke
         if(minutes < 0){
             timerMinutes.innerHTML = 0 + '<span>min</span>';
-            createNotification("Focus session done", {
-                body: "Well done, you've just finished a session",
-                icon: icon,
-                sound: sound
-            });
+            if(activeMode == 'deepWork'){
+                createNotification("Focus session done", {
+                    body: "Well done, you've just finished a session",
+                    icon: icon,
+                    sound: sound
+                });
+            }else{
+                createNotification("Meditation session done", {
+                    body: "Well done, you've just finished a session",
+                    icon: icon,
+                    sound: sound
+                });
+            }
+           
             stopTimer();
         };
         if(count == halfwayPoint && startingtime > 30){
@@ -156,7 +199,8 @@ startBtn.addEventListener('click', startTimer);
 stopBtn.addEventListener('click', stopTimer);
 
 function startTimer(){
-    interval = setInterval(countdown, 1000); // start countdown
+    // interval = setInterval(countdown, 1000); // start countdown
+    interval = setInterval(countdown, 1); // start countdown
     // display stopbtn & hide startbtn
     stopBtn.classList.remove('inactive');
     startBtn.classList.add('inactive');
@@ -223,8 +267,8 @@ function checkStreak(){
 
 
 
-const deepWorkBtn = document.querySelector('.deep-work');
-const meditationBtn = document.querySelector('.meditation');
+const deepWorkBtn = document.querySelector('.deep-work-mode');
+const meditationBtn = document.querySelector('.meditation-mode');
 
 deepWorkBtn.addEventListener('click', toggleMode);
 meditationBtn.addEventListener('click', toggleMode);
@@ -234,6 +278,7 @@ function toggleMode(){
         element.classList.remove('mode-picked');
     });
     this.classList.add('mode-picked');
-    activeMode = this.classList.contains('deep-work') ? 'deepWork' : 'meditation';
+    activeMode = this.classList.contains('deep-work-mode') ? 'deepWork' : 'meditation';
     console.log(activeMode);
+    displayMode(activeMode);
 }
