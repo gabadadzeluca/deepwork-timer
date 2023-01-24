@@ -181,8 +181,7 @@ let breakCount = breakTime * 60;
 
 function countdownBreak(){
     if(breakCount > 0){
-        // breakCount--; // test
-        breakCount-=10; // test
+        breakCount--;
 
         let minutes = Math.floor(breakCount / 60);
         let seconds = breakCount % 60;
@@ -209,7 +208,6 @@ function countdownBreak(){
         });
         clearInterval(intervalBreak, countdownBreak);
         interval = setInterval(countdown, 1000);
-        // interval = setInterval(countdown, 1);
     }
 }
 
@@ -227,8 +225,7 @@ startBtn.addEventListener('click', startTimer);
 stopBtn.addEventListener('click', stopTimer);
 
 function startTimer(){
-    // interval = setInterval(countdown, 1000); // start countdown
-    interval = setInterval(countdown, 1); // start countdown
+    interval = setInterval(countdown, 1000); // start countdown
     // display stopbtn & hide startbtn
     stopBtn.classList.remove('inactive');
     startBtn.classList.add('inactive');
