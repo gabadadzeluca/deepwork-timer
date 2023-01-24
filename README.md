@@ -30,8 +30,8 @@ User should be able to:
 
 ### Links
 
-- Live URL: [Live URL]()
-- GitHub: [GitHub](https://github.com/gabadadzeluca/deepwork-timer);
+- Live URL: [Live URL](https://gabadadzeluca.github.io/deepwork-timer/)
+- GitHub: [GitHub](https://github.com/gabadadzeluca/deepwork-timer)
 
 ## My process
 
