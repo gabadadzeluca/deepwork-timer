@@ -8,17 +8,61 @@
 
     </head>
     <body>
-        <header>
-            <nav>
-                <!-- add mode toggle -->
-                <a>Deep Work</a>
-                <a>Meditation</a>
-                
-            </nav>
-        </header>
-        <main>
+        <div class="wrapper">
 
-        </main>
-        <script src="./timer.js"></script>
+            <header>
+                <nav>
+                    <a class="deep-work-mode mode-picked">Deep Work</a>
+                    <a class="meditation-mode">Meditation</a>
+                    
+                </nav>
+            </header>
+            <main>
+                <div class="session">
+                    <p class="focus-session mobile">Focus Session</p>
+                    <p class="meditation-session mobile">Meditation</p>
+
+                    <div class="timer-container">
+                        <p class="focus-session desktop">Focus Session</p>
+                        <p class="meditation-session desktop">Meditation</p>
+                        <div class="time-select">
+                            <div class="decrease-btn"></div>
+                            <div><span class="time-selected">60</span><span>min</span></div>
+                            <div class="increase-btn"></div>
+                        </div>
+                        <div class="timer">
+                            <svg>
+                                <circle cx="70" cy="70" r="70"></circle>
+                                <circle cx="70" cy="70" r="70" class="mm"></circle>
+                            </svg>
+                            <div class="minutes">60<span>min</span></div>
+                        </div>
+                        <div class="buttons-container">
+                                <!-- add icons -->
+                            <div class="start-btn">
+                                <svg fill="#d3d6db" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M12,1A11,11,0,1,0,23,12,11.013,11.013,0,0,0,12,1Zm0,20a9,9,0,1,1,9-9A9.011,9.011,0,0,1,12,21ZM10,8l6,4-6,4Z"></path></g></svg>
+                            </div>
+                            <div class="stop-btn">
+                                <svg fill="#d3d6db" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M12,1A11,11,0,1,0,23,12,11.013,11.013,0,0,0,12,1Zm0,20a9,9,0,1,1,9-9A9.011,9.011,0,0,1,12,21ZM9,9h6v6H9Z"></path></g></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress">
+                    <div>
+                        <h3>Daily progress</h3>
+                        <div class="completed"></div>
+                    </div>
+                    <div>
+                        <h3>Streak:</h3>
+                        <div class="streak"></div>
+                    </div>
+                </div>
+            </main>
+            
+        </div>
+        <!-- moment library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+        <script type="module" src="./js/timer.js"></script>
     </body>
 </html>

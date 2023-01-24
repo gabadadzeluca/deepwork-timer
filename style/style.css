@@ -1,0 +1,233 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&display=swap");
+:root {
+  --regular: 500;
+  --bold:700;
+  --bg-dark: #303841;
+  --text-color-dark: #d3d6db;
+  --element-bg-dark: #252a2e;
+  --neon-green: rgb(30, 216, 154);
+  --purple: rgb(73, 40, 182);
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "Outfit", sans-serif;
+  font-size: 1.6rem;
+  overflow-x: hidden;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  background-color: var(--bg-dark);
+  color: var(--text-color-dark);
+}
+body * {
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.wrapper {
+  height: 100vh;
+  min-width: 35rem;
+  width: 80%;
+  max-width: 100rem;
+}
+
+header {
+  margin-top: 1rem;
+  margin-bottom: 5rem;
+}
+header nav {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+}
+header nav a {
+  background-position: left;
+  background-repeat: no-repeat;
+  background-size: contain;
+  box-sizing: border-box;
+  padding-left: 2.4rem;
+}
+header nav .meditation-mode, header nav .deep-work-mode {
+  opacity: 0.4;
+}
+header nav .meditation-mode {
+  background-image: url("../assets/meditation.svg");
+}
+header nav .deep-work-mode {
+  background-image: url("../assets/deep-work.svg");
+}
+header nav .mode-picked {
+  opacity: 1;
+}
+
+.focus-session {
+  padding-left: 2.4rem;
+  background-image: url("../assets/focus-icon.svg");
+}
+
+.meditation-session {
+  padding-left: 2.4rem;
+  background-image: url("../assets/meditation-session.svg");
+  display: none;
+}
+
+.timer-container {
+  box-sizing: border-box;
+  padding: 2rem;
+  background-color: var(--element-bg-dark);
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 5rem;
+  font-weight: var(--bold);
+}
+.timer-container span {
+  font-size: 2rem;
+  font-weight: var(--regular);
+}
+.timer-container .buttons-container {
+  display: inline-flex;
+  align-items: center;
+}
+.timer-container .buttons-container svg {
+  width: 4rem;
+}
+.timer-container p {
+  font-size: 2rem;
+  padding-left: 3rem;
+}
+.timer-container .timer {
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.timer-container .timer svg {
+  width: 15rem;
+  height: 15rem;
+  stroke-width: 8;
+  stroke: var(--bg-dark);
+  transform: rotate(-90deg);
+}
+.timer-container .timer svg circle {
+  fill: transparent;
+  transform: translate(0.5rem, 0.5rem);
+}
+.timer-container .timer svg circle:nth-child(2) {
+  stroke: var(--purple);
+  stroke-dasharray: 440;
+  transition: stroke-dashoffset 0.5s linear;
+}
+.timer-container .timer .minutes {
+  position: absolute;
+  color: white;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 4rem;
+}
+
+.time-select {
+  display: flex;
+  align-items: center;
+}
+.time-select .time-selected {
+  font-size: 5rem;
+  font-weight: var(--bold);
+}
+.time-select span {
+  font-size: 2rem;
+  font-weight: var(--regular);
+}
+.time-select .decrease-btn, .time-select .increase-btn {
+  height: 5rem;
+  width: 5rem;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 0;
+  display: flex;
+}
+.time-select .decrease-btn {
+  background-image: url("../assets/arrow-left.svg");
+}
+.time-select .increase-btn {
+  background-image: url("../assets/arrow-left.svg");
+  transform: rotate(180deg);
+}
+
+.inactive {
+  display: none;
+}
+
+.progress {
+  margin-top: 2rem;
+  margin-bottom: 10rem;
+  background-color: var(--element-bg-dark);
+  box-sizing: border-box;
+  padding: 2rem;
+  border-radius: 2rem;
+  width: 100%;
+  font-size: 1.6rem;
+}
+.progress h3 {
+  font-size: 2rem;
+}
+.progress .completed, .progress .streak {
+  opacity: 0.8;
+}
+
+.desktop {
+  display: none;
+}
+
+@media screen and (min-width: 900px) {
+  body {
+    font-size: 2rem;
+  }
+  header nav a {
+    padding-left: 3rem;
+  }
+  header nav a:hover {
+    cursor: pointer;
+    opacity: 1;
+    transition: 0.3s;
+  }
+  .focus-session.mobile {
+    padding-left: 3rem;
+    display: none;
+  }
+  .focus-session.desktop, .meditation-session.desktop {
+    display: block;
+    font-size: 2rem;
+    padding-left: 3rem;
+  }
+  main {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .session {
+    min-width: 30rem;
+    width: 65%;
+    max-width: 60rem;
+  }
+  .progress {
+    width: 30%;
+    margin: 0;
+  }
+  .timer-container .timer .minutes {
+    font-size: 4.4rem;
+  }
+  .time-select .decrease-btn:hover, .time-select .increase-btn:hover {
+    cursor: pointer;
+    opacity: 0.5;
+  }
+  .buttons-container .start-btn:hover, .buttons-container .stop-btn:hover {
+    cursor: pointer;
+    opacity: 0.5;
+  }
+}/*# sourceMappingURL=style.css.map */
