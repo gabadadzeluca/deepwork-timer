@@ -31,16 +31,30 @@ decreaseBtn.addEventListener('click', decreaseTime);
 increaseBtn.addEventListener('click', increaseTime);
 
 function decreaseTime(){
+    timeSelected = parseInt(timeSelectedDiv.innerHTML);
     // if it's less than 15, stop
-    if(timeSelected == 15 ) return;
-    timeSelected -= 15;
+    if(activeMode == 'deepWork'){
+        if(timeSelected == 15 ) return;
+        timeSelected -= 15;
+    }else{
+        if(timeSelected == 5) return;
+        timeSelected -= 5;
+    }
+
     timeSelectedDiv.innerHTML = timeSelected;
-    // timerMinutes.innerHTML = timeSelected + '<span>min</min>';
     getTime();
 }
+
 function increaseTime(){
-    if(timeSelected == 240) return;
-    timeSelected += 15;
+    timeSelected = parseInt(timeSelectedDiv.innerHTML)
+    if(activeMode == 'deepWork'){
+        if(timeSelected == 240 ) return;
+        timeSelected += 15;
+    }else{
+        if(timeSelected == 60) return;
+        timeSelected += 5;
+    }
+   
     timeSelectedDiv.innerHTML = timeSelected;
     getTime();
 }
@@ -63,11 +77,15 @@ if(!localStorage.getItem('streak')){
 // display user's progress
 displayProgress();
 displayMode(activeMode);
+
+window.addEventListener('resize', ()=>{
+    displayMode(activeMode);
+});
+
 // display mode
 function displayMode(mode){
     const focusTextDivs = document.querySelectorAll('.focus-session');
-    const meditationText = document.querySelector('.meditation-session');
-    console.log(window.innerWidth);
+    const meditationTexts = document.querySelectorAll('.meditation-session');
     if(mode == 'deepWork'){
         focusTextDivs.forEach(div=>{
             div.style.display = 'block';
@@ -81,28 +99,38 @@ function displayMode(mode){
                 }
             }
         });
-        meditationText.style.display = 'none';
+        meditationTexts.forEach(text=>{
+            text.style.display = 'none';
+        });
+        timeSelectedDiv.innerHTML = 60;
     }else{ // meditation mode
         focusTextDivs.forEach(div=>{
             div.style.display = 'none';
         });
-        meditationText.style.display = 'block';
-        
+        meditationTexts.forEach(text=>{
+            text.style.display = 'block';
+            if(window.innerWidth >= 900){
+                if(text.classList.contains('mobile')){
+                    text.style.display = 'none';
+                }
+            }else{
+                if(text.classList.contains('desktop')){
+                    text.style.display = 'none';
+                }
+            }
+        });
+        timeSelectedDiv.innerHTML = 10;
     }
+    getTime();
 }
 
-
-
 function countdown(){
-    console.log(activeMode);
     let halfwayPoint = Math.floor(timeSelected*60/2);
     if(count >= 0){
         if(activeMode == 'deepWork'){
             sessionDuration++;
             localStorage.setItem('sessionDuration', sessionDuration); // add to local storage
         }
-        // sessionDuration++;
-        // localStorage.setItem('sessionDuration', sessionDuration); // add to local storage
         count--;
 
         let minutes = Math.floor(count / 60);
@@ -206,6 +234,10 @@ function startTimer(){
     startBtn.classList.add('inactive');
     // hide time selection
     timeSelection.classList.add('inactive');
+
+    // remove event listeners
+    meditationBtn.removeEventListener('click', toggleMode);
+    deepWorkBtn.removeEventListener('click', toggleMode);
 }
 
 function stopTimer(){
@@ -218,6 +250,10 @@ function stopTimer(){
     stopBtn.classList.add('inactive');
     // display time selection
     timeSelection.classList.remove('inactive');
+    // re-enable event listeners 
+    deepWorkBtn.addEventListener('click', toggleMode);
+    meditationBtn.addEventListener('click', toggleMode);
+
     resetTimer();
     // update local storage
     localStorage.setItem('sessionDuration', sessionDuration);
@@ -240,30 +276,51 @@ function displayProgress(){
     document.querySelector('.streak').innerHTML = localStorage.getItem('streak');
 }
 
-let lastSession = localStorage.getItem("lastSession") || 0;
+let lastSession = localStorage.getItem('lastSession') || new Date();
+localStorage.setItem('lastSession', lastSession);
 
-setInterval(checkStreak, 86400000); // once every 24 hours;
 
-function checkStreak(){
-    let now = Date.now();
-    if (now - lastSession > 86400000) {
-        // reset the time spent and streak
-        localStorage.setItem('sessionDuration', 0);
-        localStorage.setItem('streak', 0);
-        localStorage.setItem('lastSession', now);
-    }else{
+
+let todayMidnight = (localStorage.getItem('todayMidnight')) || moment().startOf('day');
+localStorage.setItem('todayMidnight', todayMidnight);
+
+function refreshPage(){
+
+    let now = moment();
+    // if it's more than a day since last session
+    let difference = new Date(now) - new Date(todayMidnight);
+    if(difference > 86400000){ // more than a day passed
+        // refresh streak
+        streak = 0;
+        localStorage.setItem('streak', streak);
+        
+        // refresh session time
+        
+        sessionDuration = 0;
+        localStorage.setItem('sessionDuration', sessionDuration);
+        // update clock
+        todayMidnight = moment(now).startOf('day');
+        localStorage.setItem('todayMidnight', todayMidnight);
+        
+        // schedule next refresh
+        setRefreshTimer();
+    }else if(difference == 0){// it's midnight
         if(sessionDuration >= 30){
-            // update streak
             streak++;
             localStorage.setItem('streak', streak);
-            // refresh sessionDuration
+            lastSession = moment();
+            localStorage.setItem('lastSession', lastSession);
+            
             sessionDuration = 0;
             localStorage.setItem('sessionDuration', sessionDuration);
-            
-            displayProgress();
         }
     }
+
+    displayProgress();
 }
+refreshPage();
+setInterval(refreshPage, 3600000); // once everyhour
+
 
 
 
@@ -279,6 +336,19 @@ function toggleMode(){
     });
     this.classList.add('mode-picked');
     activeMode = this.classList.contains('deep-work-mode') ? 'deepWork' : 'meditation';
-    console.log(activeMode);
     displayMode(activeMode);
 }
+
+function setRefreshTimer(){
+    let now = new Date();
+    let night = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1, // the next day, ...
+        0, 0, 0 // ...at 00:00:00 hours
+    );
+    let msTillMidnight = night.getTime() - now.getTime();
+    setTimeout(refreshPage, msTillMidnight);
+}
+
+setRefreshTimer();
