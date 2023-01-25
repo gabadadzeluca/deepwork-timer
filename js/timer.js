@@ -292,15 +292,14 @@ localStorage.setItem('todayMidnight', todayMidnight);
 function refreshPage(){
 
     let now = moment();
-    // if it's more than a day since last session
     let difference = new Date(now) - new Date(todayMidnight);
+
     if(difference > 86400000){ // more than a day passed
         // refresh streak
         streak = 0;
         localStorage.setItem('streak', streak);
         
         // refresh session time
-        
         sessionDuration = 0;
         localStorage.setItem('sessionDuration', sessionDuration);
         // update clock
@@ -310,15 +309,22 @@ function refreshPage(){
         // schedule next refresh
         setRefreshTimer();
     }else if(difference == 0){// it's midnight
+        console.log(sessionDuration);
         if(sessionDuration >= 30){
+            console.log("streak:", streak);
             streak++;
+        }else{ // if no time that day
+            streak = 0;
             localStorage.setItem('streak', streak);
-            lastSession = moment();
-            localStorage.setItem('lastSession', lastSession);
-            
-            sessionDuration = 0;
-            localStorage.setItem('sessionDuration', sessionDuration);
+            console.log('streak failed: ', streak);
         }
+
+        // update local storage
+        localStorage.setItem('streak', streak);
+        lastSession = moment();
+        localStorage.setItem('lastSession', lastSession);
+        sessionDuration = 0;
+        localStorage.setItem('sessionDuration', sessionDuration);
     }
 
     displayProgress();
