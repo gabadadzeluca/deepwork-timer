@@ -102,7 +102,6 @@ function displayMode(mode){
         meditationTexts.forEach(text=>{
             text.style.display = 'none';
         });
-        timeSelectedDiv.innerHTML = 60;
     }else{ // meditation mode
         focusTextDivs.forEach(div=>{
             div.style.display = 'none';
@@ -119,6 +118,15 @@ function displayMode(mode){
                 }
             }
         });
+    }
+}
+
+// this function will set meditation time to 10
+// and timer to 60, when switching modes
+function switchMode(activeMode){
+    if(activeMode == 'deepWork'){
+        timeSelectedDiv.innerHTML = 60;
+    }else{
         timeSelectedDiv.innerHTML = 10;
     }
     getTime();
@@ -334,6 +342,7 @@ function toggleMode(){
     this.classList.add('mode-picked');
     activeMode = this.classList.contains('deep-work-mode') ? 'deepWork' : 'meditation';
     displayMode(activeMode);
+    switchMode(activeMode);
 }
 
 function setRefreshTimer(){
