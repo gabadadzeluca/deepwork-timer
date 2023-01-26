@@ -69,7 +69,7 @@ let sessionDuration = localStorage.getItem('sessionDuration') || 0;
 if(!localStorage.getItem('sessionDuration')){
     localStorage.setItem('sessionDuration', 0);
 }
-let streak = localStorage.getItem('steak') || 0;
+let streak = localStorage.getItem('streak') || 0;
 if(!localStorage.getItem('streak')){
     localStorage.setItem('streak', streak);
 }
@@ -315,13 +315,11 @@ function refreshPage(){
         setRefreshTimer();
     }else if(difference == 0){// it's midnight
         console.log(sessionDuration);
-        if(sessionDuration >= 30){
-            console.log("streak:", streak);
+        if(sessionDuration >= 15){
             streak++;
         }else{ // if no time that day
             streak = 0;
             localStorage.setItem('streak', streak);
-            console.log('streak failed: ', streak);
         }
 
         // update local storage
