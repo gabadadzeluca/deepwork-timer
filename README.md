@@ -13,6 +13,9 @@
 
 ## Overview
 
+
+The design is authentic, though Windows' timer app was my inspiration and the source of an overall idea.
+
 ### The challange
 
 
