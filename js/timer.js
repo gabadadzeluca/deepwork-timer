@@ -238,7 +238,7 @@ startBtn.addEventListener('click', startTimer);
 stopBtn.addEventListener('click', stopTimer);
 
 function startTimer(){
-    interval = setInterval(countdown, 1); // start countdown
+    interval = setInterval(countdown, 1000); // start countdown
     // display stopbtn & hide startbtn
     stopBtn.classList.remove('inactive');
     startBtn.classList.add('inactive');
