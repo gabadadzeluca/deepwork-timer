@@ -146,8 +146,10 @@ function countdown(){
         // update values
         timerMinutes.innerHTML = minutes + '<span>min</span>';
     
-        // display stroke
-        if(minutes < 0){
+
+        if(minutes<1 && seconds > 0){
+            timerMinutes.innerHTML = '0:' + seconds;
+        }else if(minutes < 0){// display stroke
             timerMinutes.innerHTML = 0 + '<span>min</span>';
             if(activeMode == 'deepWork'){
                 createNotification("Focus session done", {
@@ -164,7 +166,10 @@ function countdown(){
             }
            
             stopTimer();
-        };
+        }else{
+            timerMinutes.innerHTML = minutes + '<span>min</span>'
+        }
+
         if(count == halfwayPoint && startingtime > 30){
             clearInterval(interval, countdown);// stop at half
             // display break over notification
@@ -233,7 +238,7 @@ startBtn.addEventListener('click', startTimer);
 stopBtn.addEventListener('click', stopTimer);
 
 function startTimer(){
-    interval = setInterval(countdown, 1000); // start countdown
+    interval = setInterval(countdown, 1); // start countdown
     // display stopbtn & hide startbtn
     stopBtn.classList.remove('inactive');
     startBtn.classList.add('inactive');
