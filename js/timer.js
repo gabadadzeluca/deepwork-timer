@@ -149,6 +149,9 @@ function countdown(){
 
         if(minutes<1 && seconds > 0){
             timerMinutes.innerHTML = '0:' + seconds;
+            if(seconds<10){
+                timerMinutes.innerHTML = '0:0' + seconds;
+            }
         }else if(minutes < 0){// display stroke
             timerMinutes.innerHTML = 0 + '<span>min</span>';
             if(activeMode == 'deepWork'){
@@ -203,6 +206,9 @@ function countdownBreak(){
             timerMinutes.innerHTML = minutes + ':' + seconds;
         }else if(minutes<1 && seconds > 0){
             timerMinutes.innerHTML = '0:' + seconds;
+            if(seconds<10){
+                timerMinutes.innerHTML = '0:0' + seconds;
+            }
         }else{
             timerMinutes.innerHTML = minutes + '<span>min</span>'
         }
