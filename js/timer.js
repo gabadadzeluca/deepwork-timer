@@ -296,58 +296,6 @@ function displayProgress(){
     document.querySelector('.streak').innerHTML = localStorage.getItem('streak');
 }
 
-let lastSession = localStorage.getItem('lastSession') || new Date();
-localStorage.setItem('lastSession', lastSession);
-
-
-
-let todayMidnight = (localStorage.getItem('todayMidnight')) || moment().startOf('day');
-localStorage.setItem('todayMidnight', todayMidnight);
-
-function refreshPage(){
-
-    let now = moment();
-    let difference = new Date(now) - new Date(todayMidnight);
-
-    if(difference > 86400000){ // more than a day passed
-        // refresh streak
-        streak = 0;
-        localStorage.setItem('streak', streak);
-        
-        // refresh session time
-        sessionDuration = 0;
-        localStorage.setItem('sessionDuration', sessionDuration);
-        // update clock
-        todayMidnight = moment(now).startOf('day');
-        localStorage.setItem('todayMidnight', todayMidnight);
-        
-        // schedule next refresh
-        setRefreshTimer();
-    }else if(difference == 0){// it's midnight
-        console.log(sessionDuration);
-        if(sessionDuration >= 15){
-            streak++;
-        }else{ // if no time that day
-            streak = 0;
-            localStorage.setItem('streak', streak);
-        }
-
-        // update local storage
-        localStorage.setItem('streak', streak);
-        lastSession = moment();
-        localStorage.setItem('lastSession', lastSession);
-        sessionDuration = 0;
-        localStorage.setItem('sessionDuration', sessionDuration);
-    }
-
-    displayProgress();
-}
-refreshPage();
-setInterval(refreshPage, 3600000); // once everyhour
-
-
-
-
 const deepWorkBtn = document.querySelector('.deep-work-mode');
 const meditationBtn = document.querySelector('.meditation-mode');
 
@@ -364,16 +312,35 @@ function toggleMode(){
     switchMode(activeMode);
 }
 
-function setRefreshTimer(){
-    let now = new Date();
-    let night = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate() + 1, // the next day, ...
-        0, 0, 0 // ...at 00:00:00 hours
-    );
-    let msTillMidnight = night.getTime() - now.getTime();
-    setTimeout(refreshPage, msTillMidnight);
-}
-
-setRefreshTimer();
+function updateStreak() {
+    let today = new Date();
+    let lastUse = localStorage.getItem("lastUse");
+    let lastUpdate = localStorage.getItem("lastUpdate");
+    let streak = localStorage.getItem("streak");
+  
+    if (!lastUse) {
+      lastUse = today;
+      streak = 1;
+    }
+  
+    if (!lastUpdate || (today.toDateString() !== new Date(lastUpdate).toDateString())) {
+      let diff = (today - new Date(lastUse)) / (1000 * 60 * 60 * 24);
+      if (diff >= 1) {
+        streak = 0;
+      } else if (diff < 1 && sessionDuration >= 15*60) {
+        streak++;
+      }
+      localStorage.setItem("lastUpdate", today);
+    }
+  
+    localStorage.setItem("lastUse", today);
+    localStorage.setItem("streak", streak);
+  
+    console.log("Current streak: " + streak);
+    displayProgress();
+  }
+  
+  // Check and update streak every time the app is opened
+  window.addEventListener("load", function() {
+    updateStreak();
+  });
