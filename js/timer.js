@@ -245,9 +245,6 @@ stopBtn.addEventListener('click', stopTimer);
 
 function startTimer(){
     // update last session
-    lastSession = moment();
-    localStorage.setItem('lastSession', lastSession);
-
     interval = setInterval(countdown, 1000); // start countdown
     // display stopbtn & hide startbtn
     stopBtn.classList.remove('inactive');
