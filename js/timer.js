@@ -324,6 +324,8 @@ function updateStreak() {
       let diff = (today - new Date(lastUse)) / (1000 * 60 * 60 * 24);
       if (diff >= 1) {
         streak = 0;
+        sessionDuration = 0;
+        localStorage.setItem('sessionDuration', sessionDuration); // reset daily streak
       } else if (diff < 1 && sessionDuration >= 15*60) {
         streak++;
       }
@@ -335,9 +337,9 @@ function updateStreak() {
   
     console.log("Current streak: " + streak);
     displayProgress();
-  }
+}
   
-  // Check and update streak every time the app is opened
-  window.addEventListener("load", function() {
+// Check and update streak every time the app is opened
+window.addEventListener("load", function() {
     updateStreak();
-  });
+});
