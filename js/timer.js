@@ -327,6 +327,8 @@ function updateStreak() {
         sessionDuration = 0;
         localStorage.setItem('sessionDuration', sessionDuration); // reset daily streak
       } else if (diff < 1 && sessionDuration >= 15*60) {
+        sessionDuration = 0;
+        localStorage.setItem('sessionDuration', sessionDuration);
         streak++;
       }
       localStorage.setItem("lastUpdate", today);
